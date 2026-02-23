@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Devendra Veer — AI Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #08090a;
+    --surface: #111214;
+    --border: #1e2024;
+    --accent: #00e5a0;
+    --accent2: #7c6dfa;
+    --text: #e8eaed;
+    --muted: #6b7280;
+    --glow: rgba(0,229,160,0.15);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content:'';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* GRID BACKGROUND */
+  body::after {
+    content:'';
+    position: fixed;
+    inset: 0;
+    background-image: linear-gradient(rgba(0,229,160,0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(0,229,160,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* NAV */
+  nav {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(8,9,10,0.85);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+  nav .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+  }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    padding: 100px 0 80px;
+    position: relative;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,229,160,0.08);
+    border: 1px solid rgba(0,229,160,0.2);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(42px, 7vw, 72px);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  .hero h1 .name { color: var(--accent); }
+  .hero-sub {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 520px;
+    margin-bottom: 36px;
+    animation: fadeUp 0.6s 0.2s ease both;
+    font-family: 'DM Mono', monospace;
+    font-style: italic;
+  }
+  .hero-links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    font-weight: 500;
+  }
+  .btn-primary:hover { background: #00ffb3; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,229,160,0.3); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* SKILLS STRIP */
+  .skills-strip {
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 80px;
+    overflow: hidden;
+    position: relative;
+  }
+  .skills-strip::before, .skills-strip::after {
+    content:'';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 80px;
+    z-index: 2;
+  }
+  .skills-strip::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
+  .skills-strip::after { right: 0; background: linear-gradient(-90deg, var(--bg), transparent); }
+  .skills-scroll {
+    display: flex;
+    gap: 32px;
+    animation: scroll 20s linear infinite;
+    width: max-content;
+  }
+  @keyframes scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .skill-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+  .skill-pill span { color: var(--accent2); }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-num {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* PROJECT CARDS */
+  .projects { margin-bottom: 80px; }
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.2s;
+    animation: fadeUp 0.5s ease both;
+  }
+  .project-card:hover {
+    border-color: rgba(0,229,160,0.3);
+    transform: translateY(-2px);
+  }
+  .project-card::before {
+    content:'';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .project-card:hover::before { opacity: 1; }
+  .project-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .project-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+  .project-links { display: flex; gap: 10px; }
+  .project-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+  .project-links a:hover { color: var(--accent); border-color: var(--accent); }
+  .project-desc {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 16px;
+    line-height: 1.65;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    background: rgba(124,109,250,0.1);
+    border: 1px solid rgba(124,109,250,0.2);
+    color: var(--accent2);
+    letter-spacing: 0.04em;
+  }
+  .tag.ai {
+    background: rgba(0,229,160,0.08);
+    border-color: rgba(0,229,160,0.2);
+    color: var(--accent);
+  }
+
+  /* HIGHLIGHT STAT */
+  .stat-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 80px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .stat-label { color: var(--muted); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* AI FOCUS SECTION */
+  .ai-focus {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 36px;
+    margin-bottom: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ai-focus::after {
+    content:'';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(0,229,160,0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .ai-focus-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  .ai-stack {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .ai-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .ai-item::before {
+    content: '→';
+    color: var(--accent);
+    font-size: 12px;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    text-align: center;
+  }
+  .footer-cta {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+  .footer-cta .accent { color: var(--accent); }
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .contact-link {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .contact-link:hover { color: var(--accent); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .stat-bar { grid-template-columns: 1fr; }
+    .ai-stack { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="nav-logo">DV.ai</div>
+    <div class="nav-links">
+      <a href="#projects">Projects</a>
+      <a href="#stack">AI Stack</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="hero-tag">Open to Internships · Remote</div>
+      <h1>Building AI<br/>systems that<br/><span class="name">actually ship.</span></h1>
+      <p class="hero-sub">// Final-year CS student. Founding Engineer. GenAI + backend + data workflows.</p>
+      <div class="hero-links">
+        <a class="btn btn-primary" href="mailto:devendraveer01@gmail.com">↗ Let's Talk</a>
+        <a class="btn btn-ghost" href="https://github.com/DevendraVeer" target="_blank">GitHub →</a>
+        <a class="btn btn-ghost" href="https://linkedin.com/in/devendraveer" target="_blank">LinkedIn →</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="skills-strip">
+    <div class="container" style="overflow:hidden; padding:0;">
+      <div class="skills-scroll">
+        <div class="skill-pill"><span>▸</span> LLM Inference</div>
+        <div class="skill-pill"><span>▸</span> RAG Systems</div>
+        <div class="skill-pill"><span>▸</span> Groq API</div>
+        <div class="skill-pill"><span>▸</span> Prompt Engineering</div>
+        <div class="skill-pill"><span>▸</span> NLP / Transformers</div>
+        <div class="skill-pill"><span>▸</span> Flask / Next.js</div>
+        <div class="skill-pill"><span>▸</span> PostgreSQL</div>
+        <div class="skill-pill"><span>▸</span> Docker</div>
+        <div class="skill-pill"><span>▸</span> REST APIs</div>
+        <div class="skill-pill"><span>▸</span> Data Pipelines</div>
+        <!-- duplicate for seamless scroll -->
+        <div class="skill-pill"><span>▸</span> LLM Inference</div>
+        <div class="skill-pill"><span>▸</span> RAG Systems</div>
+        <div class="skill-pill"><span>▸</span> Groq API</div>
+        <div class="skill-pill"><span>▸</span> Prompt Engineering</div>
+        <div class="skill-pill"><span>▸</span> NLP / Transformers</div>
+        <div class="skill-pill"><span>▸</span> Flask / Next.js</div>
+        <div class="skill-pill"><span>▸</span> PostgreSQL</div>
+        <div class="skill-pill"><span>▸</span> Docker</div>
+        <div class="skill-pill"><span>▸</span> REST APIs</div>
+        <div class="skill-pill"><span>▸</span> Data Pipelines</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="stat-bar">
+      <div class="stat-card">
+        <span class="stat-num">₹15L+</span>
+        <span class="stat-label">Revenue impact Q1</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">3</span>
+        <span class="stat-label">Shipped AI Products</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">98%</span>
+        <span class="stat-label">Transaction success rate</span>
+      </div>
+    </div>
+
+    <section id="projects" class="projects">
+      <div class="section-header">
+        <span class="section-label">AI Projects</span>
+        <div class="section-line"></div>
+        <span class="section-num">01</span>
+      </div>
+
+      <div class="project-card" style="animation-delay:0.1s">
+        <div class="project-top">
+          <div class="project-name">Whispr</div>
+          <div class="project-links">
+            <a href="#" target="_blank">Live ↗</a>
+            <a href="https://github.com/DevendraVeer" target="_blank">GitHub</a>
+          </div>
+        </div>
+        <p class="project-desc">
+          GenAI chat platform built on Groq LPU inference — ultra-low latency LLM responses. Engineered system prompt architecture for consistent model behavior, context window management, and optimized state handling for scalable real-time interactions.
+        </p>
+        <div class="tags">
+          <span class="tag ai">Groq LPU</span>
+          <span class="tag ai">LLM Inference</span>
+          <span class="tag ai">System Prompts</span>
+          <span class="tag ai">Context Management</span>
+          <span class="tag">React.js</span>
+          <span class="tag">Express.js</span>
+          <span class="tag">MongoDB</span>
+        </div>
+      </div>
+
+      <div class="project-card" style="animation-delay:0.2s">
+        <div class="project-top">
+          <div class="project-name">Nexora</div>
+          <div class="project-links">
+            <a href="https://github.com/DevendraVeer" target="_blank">GitHub</a>
+          </div>
+        </div>
+        <p class="project-desc">
+          End-to-end mentorship platform with scheduling, client management, admin controls, and Zoom SDK video integration. Used SQL analytics to derive product insights and power reporting dashboards.
+        </p>
+        <div class="tags">
+          <span class="tag">Next.js</span>
+          <span class="tag">PostgreSQL</span>
+          <span class="tag ai">Data Analytics</span>
+          <span class="tag">Prisma</span>
+          <span class="tag">Stripe</span>
+          <span class="tag">Zoom SDK</span>
+        </div>
+      </div>
+
+      <div class="project-card" style="animation-delay:0.3s">
+        <div class="project-top">
+          <div class="project-name">Roverpay</div>
+          <div class="project-links">
+            <a href="https://github.com/DevendraVeer" target="_blank">GitHub</a>
+          </div>
+        </div>
+        <p class="project-desc">
+          Distributed payment system with fault-tolerance architecture, Docker containerization, and RBAC. Engineered for reliability — 98/100 successful test transactions under concurrent load.
+        </p>
+        <div class="tags">
+          <span class="tag">MERN Stack</span>
+          <span class="tag">Docker</span>
+          <span class="tag">JWT</span>
+          <span class="tag">RBAC</span>
+          <span class="tag ai">System Design</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="stack" class="ai-focus">
+      <div class="ai-focus-title">AI/ML Capabilities</div>
+      <p style="color: var(--muted); font-size: 13px; max-width: 540px;">
+        My focus is building production AI systems — not just calling APIs, but architecting reliable, context-aware, low-latency AI pipelines end-to-end.
+      </p>
+      <div class="ai-stack">
+        <div class="ai-item">Generative AI & LLM integration</div>
+        <div class="ai-item">RAG pipeline design</div>
+        <div class="ai-item">Prompt engineering & system prompts</div>
+        <div class="ai-item">NLP & Transformer architectures</div>
+        <div class="ai-item">Groq API / ultra-low latency inference</div>
+        <div class="ai-item">Structured data for ML-ready pipelines</div>
+        <div class="ai-item">CS229 Machine Learning (Stanford)</div>
+        <div class="ai-item">Feature engineering & analytics</div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer id="contact">
+  <div class="container">
+    <div class="footer-cta">Let's build something<br/><span class="accent">worth shipping.</span></div>
+    <div class="contact-links">
+      <a class="contact-link" href="mailto:devendraveer01@gmail.com">✉ devendraveer01@gmail.com</a>
+      <a class="contact-link" href="tel:+918421131045">📞 +91 8421131045</a>
+      <a class="contact-link" href="https://github.com/DevendraVeer" target="_blank">GitHub ↗</a>
+      <a class="contact-link" href="https://linkedin.com/in/devendraveer" target="_blank">LinkedIn ↗</a>
+    </div>
+    <p style="color: var(--muted); font-size: 11px; margin-top: 32px; letter-spacing: 0.05em;">Devendra Veer · Final Year CSE · AISSMS IIT Pune · 2026</p>
+  </div>
+</footer>
+
+</body>
+</html>
